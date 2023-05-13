@@ -40,6 +40,7 @@ public class Processor {
 		boolean R3Zero = false;
 		
 		if(Integer.parseInt(R1Add,2) == 0) {
+			currInstruction.AddrR1 = Integer.parseInt(R1Add,2);
 			currInstruction.R1=0;
 			R1Zero = true;
 		}	
@@ -52,52 +53,24 @@ public class Processor {
 			R3Zero = true;
 		}
 		
-		int operation = Integer.parseInt(currInstruction.OpCode, 2);
-		
-		//System.out.println(operation);
-		
-		switch(operation) {
-		   case 0:
-		   case 1:
-		   case 2:
-		   case 5:  if(!R1Zero) {
-			   			currInstruction.AddrR1 = Integer.parseInt(R1Add,2);
+		  if(!R1Zero) {
+			  	currInstruction.R1 = Registers[Integer.parseInt(R1Add,2) - 1];
+			   	currInstruction.AddrR1 = Integer.parseInt(R1Add,2);
 		   			}
-		   			if(!R2Zero) {
-		   				currInstruction.R2 = Registers[Integer.parseInt(R2Add,2) - 1];
+		  if(!R2Zero) {
+		   		currInstruction.R2 = Registers[Integer.parseInt(R2Add,2) - 1];
 		   			}	
-		   			if(!R3Zero) {
-		   				currInstruction.R3 = Registers[Integer.parseInt(R3Add,2) - 1];
+		  if(!R3Zero) {
+		   		currInstruction.R3 = Registers[Integer.parseInt(R3Add,2) - 1];
 		   			}
-		   			//System.out.println("test");
-		   			break;
-		   case 3:
-		   case 4:
-		   case 6:
-		   case 10:
-		   case 11:	if(!R1Zero) {
-	   					currInstruction.R1 = Registers[Integer.parseInt(R1Add,2) - 1];
-	   					currInstruction.AddrR1 = Integer.parseInt(R1Add,2);
-  					}
-		   			if(!R2Zero) {
-		   				currInstruction.R2 = Registers[Integer.parseInt(R2Add,2) - 1];
-		   			}	
-  					currInstruction.Imm = IR.substring(14, 32);
-  					break;
-		   case 7: currInstruction.JumpAddress = IR.substring(14, 32);
-		   		   break;
-		   case 8:
-		   case 9: 	if(!R1Zero) {
-			   			currInstruction.AddrR1 = Integer.parseInt(R1Add,2);
-  					}
-		  			if(!R2Zero) {
-		  				currInstruction.R2 = Registers[Integer.parseInt(R2Add,2) - 1];
-		  			}  
-					currInstruction.SHAMT  = IR.substring(19, 3);
-					break; 	   
-		}
-		
-			
+		   		
+		 		   	
+  		currInstruction.Imm = IR.substring(14, 32);
+  				
+		currInstruction.JumpAddress = IR.substring(4, 32);
+
+		currInstruction.SHAMT  = IR.substring(19, 3);
+					
 	}
 	
 	int ALUoutput = 0;
@@ -123,7 +96,6 @@ public class Processor {
     
     public static int ALU(int operandA, int operandB, int operation, String SHAMT, String BinImm, int PC, String JumpAddress) {
         
-    	
         int output = 0;
         zeroFlag = 0;
         

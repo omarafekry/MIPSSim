@@ -143,6 +143,46 @@ public class Processor {
         return output;
     }
     
+    public void memory() {
+    	
+    	int neededRegister = currInstruction.AddrR1;
+    	
+    	if(Integer.parseInt(currInstruction.OpCode,2) == 10) {
+    		int MemValue = Integer.parseInt(BoolArraytoString(MEM.getInstruction(ReqMemAddr)),2);
+    		ALUoutput = MemValue;
+    		}
+    	
+    	if(Integer.parseInt(currInstruction.OpCode,2) == 11) {
+    		MEM.addData(StringtoBoolArray(ZeroPadding(Integer.toBinaryString(currInstruction.R1))), ReqMemAddr);
+    	}
+    	
+    }
+    
+    public void writeback() {
+    	int operation = Integer.parseInt(currInstruction.OpCode,2);
+    	
+    	
+    	if( operation!= 4 || operation != 7 || operation!= 11) {
+    		if(currInstruction.AddrR1 == 0) {
+    			return;
+    		}
+    		
+    		Registers[currInstruction.AddrR1 - 1] = ALUoutput;
+    	}
+    }
+    	  	
+    public static boolean[] StringtoBoolArray(String s) {
+    	boolean[] result = new boolean[32];
+    	for(int i = 0; i<s.length();i++) {
+    		if(s.charAt(i)=='1')
+    			result[i] = true;
+    		else
+    			result[i] = false;
+    	}
+    	
+    	return result;
+    }
+    
     public static String BoolArraytoString(boolean[] BoolArray) {
     	String result ="";
     	for(int i = 0; i<BoolArray.length;i++) {
@@ -154,6 +194,8 @@ public class Processor {
     	
     	return result;
     }
+    
+    
     
     public static String ZeroPadding(String s) {
     	String result = s;

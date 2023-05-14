@@ -17,19 +17,22 @@ public class Processor {
 			Registers[i] = 0;
 		}
 		
-		Registers[1] = 2;
-		Registers[4] = 3;
+		Registers[0] = 2;
+		Registers[1] = 3;
+		Registers[2] = 3;
+		Registers[3] = 4;
 		
 		IR="00000000000000000000000000000000";
 		currInstruction = new Instruction();
 	}
 	
 	public void fetch(){
-		IR = BoolArraytoString(MEM.getData(PC));
+		IR = BoolArraytoString(MEM.getInstruction(PC));
 		PC++;
 	}
 	
 	public void decode() {
+		currInstruction = new Instruction();
 		currInstruction.OpCode = IR.substring(0, 4);
 		String R1Add = IR.substring(4, 9);
 		String R2Add = IR.substring(9, 14);
@@ -69,7 +72,7 @@ public class Processor {
   				
 		currInstruction.JumpAddress = IR.substring(4, 32);
 
-		currInstruction.SHAMT  = IR.substring(19, 3);
+		currInstruction.SHAMT  = IR.substring(19, 32);
 					
 	}
 	
@@ -81,7 +84,7 @@ public class Processor {
 		int operandA = currInstruction.R2;
 		int operandB = currInstruction.R3;
 		int operation = Integer.parseInt(currInstruction.OpCode, 2);
-		int ALUoutput = ALU(operandA, operandB, operation, currInstruction.SHAMT, currInstruction.Imm, PC, currInstruction.JumpAddress);
+		ALUoutput = ALU(operandA, operandB, operation, currInstruction.SHAMT, currInstruction.Imm, PC, currInstruction.JumpAddress);
 		
 		if(operation == 4 && zeroFlag==1) {
 			PC = ALUoutput;
@@ -89,6 +92,10 @@ public class Processor {
 			
 		if(operation == 7) {	
 			PC = ALUoutput;
+		}
+		
+		if(operation==10 || operation==11) {
+			ReqMemAddr = ALUoutput;
 		}
 		
 	}
@@ -161,9 +168,24 @@ public class Processor {
 	
 	public static void main(String[] args) {
 		Processor p = new Processor();
-	
-		System.out.println(ALU(4, 4, 7, "0000000000000", "000000000000000011",2,"0000000000000000000000000011"));
-	
+		boolean[] array = {false,false,false,false,false,false,false,false,true,false,false,false,true,true,false,false,false,false,true,false,false,false,false,false,true,false,false,false,false,false,true,false};
+		p.MEM.addInstruction(array);
+		p.fetch();
+		p.decode();
+		p.execute();
+		System.out.println(p.IR);
+		System.out.println("OpCode:" + p.currInstruction.OpCode);
+		System.out.println("AddrR1:" + p.currInstruction.AddrR1);
+		System.out.println("R1:" + p.currInstruction.R1);
+		System.out.println("R2:" + p.currInstruction.R2);
+		System.out.println("R3:" + p.currInstruction.R3);
+		System.out.println("Imm:" + p.currInstruction.Imm);
+		System.out.println("SHAMT:" + p.currInstruction.SHAMT);
+		System.out.println("JumpAddress:" + p.currInstruction.JumpAddress);
+		System.out.println("ALUoutput:" + p.ALUoutput);
 		
+	
+	
+	
 	}
 }

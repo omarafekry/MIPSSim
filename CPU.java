@@ -41,14 +41,27 @@ public class CPU {
         registers[4].value = 4;
         registers[5].value = 4;
 
+        System.out.printf("%-9s %-9s %-9s %-9s %-9s %-9s\n","CYCLE","FETCH","DECODE","EXECUTE", "MEMORY", "WRITEBACK");
+        // print divider
+        String str = "---------";
+        System.out.printf("%-9s %-9s %-9s %-9s %-9s %-9s\n",str,str,str,str,str,str);
+
         for (int cycle = 0; cycle < 7 + ((mem.getNumberOfInstructions() - 1) * 2); cycle++, fetchOrMemory = !fetchOrMemory) {
-			System.out.println("-------CYCLE " + (cycle+1) + "------- PC = " + PC.value);
+			//System.out.println("-------CYCLE " + (cycle+1) + "------- PC = " + PC.value);
             if (fetchOrMemory && PC.value < mem.getNumberOfInstructions())
                 fetch.fetch(PC, mem);
             if (decode.isReady() && fetch.hasOutput)
-                decode.decode(fetch.getInstructionString(), registers);
+                decode.decode(fetch.getInstruction(), registers);
             if (execute.isReady() && decode.hasOutput)
                 execute.execute(decode.getInstruction(), PC);
+            if (memory.isReady() && execute.hasOutput)
+                memory.memory(mem, execute.getInstruction());
+            if (writeBack.isReady() && memory.hasOutput)
+                writeBack.writeback(registers, memory.getInstruction());
+
+            System.out.printf("%-9s %-9s %-9s %-9s %-9s %-9s\n", (cycle+1), fetch.getInstructionID(),decode.getInstructionID(),execute.getInstructionID(),memory.getInstructionID(),writeBack.getInstructionID());
+
+
 
             fetch.cycle();
             decode.cycle();

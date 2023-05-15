@@ -16,28 +16,25 @@ public class Decode extends PPPart {
 			outputInstruction = waitingInstruction.clone();
 			waitingInstruction = null;
 			hasOutput = true;
-		} else {
-
+			instructionID = -1;
 		}
 		if (toPrint > 0) {
-			System.out.println("DECODING INSTRUCTION " + counter);
+			//System.out.println("DECODING INSTRUCTION " + counter);
 			toPrint--;
 		}
 	}
 
 	Instruction getInstruction() {
-		Instruction temp = outputInstruction.clone();
-		outputInstruction = null;
 		hasOutput = false;
-		return temp;
+		return outputInstruction;
 	}
 
-	public void decode(String IR, Register[] Registers) {
+	public void decode(Instruction IR, Register[] Registers) {
 		currInstruction = new Instruction();
-		currInstruction.OpCode = IR.substring(0, 4);
-		String R1Add = IR.substring(4, 9);
-		String R2Add = IR.substring(9, 14);
-		String R3Add = IR.substring(14, 19);
+		currInstruction.OpCode = IR.instruction.substring(0, 4);
+		String R1Add = IR.instruction.substring(4, 9);
+		String R2Add = IR.instruction.substring(9, 14);
+		String R3Add = IR.instruction.substring(14, 19);
 
 		boolean R1Zero = false;
 		boolean R2Zero = false;
@@ -68,14 +65,16 @@ public class Decode extends PPPart {
 			currInstruction.R3 = Registers[Integer.parseInt(R3Add, 2) - 1].value;
 		}
 
-		currInstruction.Imm = IR.substring(14, 32);
+		currInstruction.Imm = IR.instruction.substring(14, 32);
 
-		currInstruction.JumpAddress = IR.substring(4, 32);
+		currInstruction.JumpAddress = IR.instruction.substring(4, 32);
 
-		currInstruction.SHAMT = IR.substring(19, 32);
+		currInstruction.SHAMT = IR.instruction.substring(19, 32);
 
 		waitingInstruction = currInstruction;
 		toPrint += 2;
 		counter++;
+		currInstruction.id = IR.id;
+		instructionID = IR.id;
 	}
 }

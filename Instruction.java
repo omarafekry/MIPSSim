@@ -8,6 +8,9 @@ public class Instruction {
 	public String SHAMT; 
 	public String Imm;
 	public String JumpAddress;
+	public int ALUoutput;
+	public int id;
+	public String instruction;
 	
 	public Instruction() {
 		OpCode = "00000";
@@ -18,6 +21,9 @@ public class Instruction {
 		SHAMT = "0000000000000";
 		Imm = "000000000000000000";
 		JumpAddress = "0000000000000000000000000000";
+		ALUoutput = 0;
+		id = -1;
+		instruction = "00000000000000000000000000000000";
 	}
 	protected Instruction clone(){
 		Instruction i = new Instruction();
@@ -29,7 +35,9 @@ public class Instruction {
 		i.R2 = this.R2;
 		i.R3 = this.R3;
 		i.SHAMT = this.SHAMT;
-
+		i.ALUoutput = this.ALUoutput;
+		i.id = this.id;
+		i.instruction = this.instruction;
 		return i;
 	}
 }

@@ -1,6 +1,6 @@
 public class Execute extends PPPart{
     int zeroFlag;
-    Instruction currInstruction, outputInstruction;
+    Instruction currInstruction = null, outputInstruction = null, waitingInstruction = null;
     int ReqMemAddr;
     boolean hasOutput;
     int toPrint = 0;
@@ -11,12 +11,14 @@ public class Execute extends PPPart{
     }
     void cycle(){
         super.cycle();
-        if (cycle == 1){
-            outputInstruction = currInstruction;
+        if (cycle == 2 && waitingInstruction != null){
+            outputInstruction = waitingInstruction.clone();
+            waitingInstruction = null;
             hasOutput = true;
+            instructionID = -1;
         }
         if (toPrint > 0){
-            System.out.println("EXECUTING INSTRUCTION " + counter);
+            //System.out.println("EXECUTING INSTRUCTION " + counter);
             toPrint--;
         }
     }
@@ -24,28 +26,25 @@ public class Execute extends PPPart{
         hasOutput = false;
         return outputInstruction;
     }
-
-    public int execute(Instruction inst, Register PC) {
+    public void execute(Instruction inst, Register PC) {
         currInstruction = inst;
 		int operandA = currInstruction.R2;
 		int operandB = currInstruction.R3;
 		int operation = Integer.parseInt(currInstruction.OpCode, 2);
-		int ALUoutput = ALU(operandA, operandB, operation, currInstruction.SHAMT, currInstruction.Imm, PC.value, currInstruction.JumpAddress);
+		currInstruction.ALUoutput = ALU(operandA, operandB, operation, currInstruction.SHAMT, currInstruction.Imm, PC.value, currInstruction.JumpAddress);
 		
 		if(operation == 4 && zeroFlag==1) {
-			PC.value = ALUoutput;
+			PC.value = currInstruction.ALUoutput;
 		}	
 			
 		if(operation == 7) {	
-			PC.value = ALUoutput;
+			PC.value = currInstruction.ALUoutput;
 		}
 		
-		if(operation==10 || operation==11) {
-			ReqMemAddr = ALUoutput;
-		}
         toPrint += 2;
         counter++;
-		return ALUoutput;
+        waitingInstruction = currInstruction;
+        instructionID = currInstruction.id;
 	}
     public int ALU(int operandA, int operandB, int operation, String SHAMT, String BinImm, int PC, String JumpAddress) {
         

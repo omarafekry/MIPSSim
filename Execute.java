@@ -4,6 +4,7 @@ public class Execute extends PPPart{
     int ReqMemAddr;
     boolean hasOutput;
     int toPrint = 0;
+    int counter = 0;
     Execute(){
         neededCycles = 2;
         cycle = 1;
@@ -15,7 +16,7 @@ public class Execute extends PPPart{
             hasOutput = true;
         }
         if (toPrint > 0){
-            System.out.println("EXECUTING");
+            System.out.println("EXECUTING INSTRUCTION " + counter);
             toPrint--;
         }
     }
@@ -43,6 +44,7 @@ public class Execute extends PPPart{
 			ReqMemAddr = ALUoutput;
 		}
         toPrint += 2;
+        counter++;
 		return ALUoutput;
 	}
     public int ALU(int operandA, int operandB, int operation, String SHAMT, String BinImm, int PC, String JumpAddress) {

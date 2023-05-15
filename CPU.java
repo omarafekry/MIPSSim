@@ -36,6 +36,10 @@ public class CPU {
 
         registers[0].value = 3;
         registers[1].value = 4;
+        registers[2].value = 4;
+        registers[3].value = 4;
+        registers[4].value = 4;
+        registers[5].value = 4;
 
         for (int cycle = 0; cycle < 7 + ((mem.getNumberOfInstructions() - 1) * 2); cycle++, fetchOrMemory = !fetchOrMemory) {
 			System.out.println("-------CYCLE " + (cycle+1) + "------- PC = " + PC.value);

@@ -3,6 +3,7 @@ public class Fetch extends PPPart{
     String instructionString;
     boolean hasOutput = false, cycleOut = false;
     int toPrint = 0;
+    int counter = 0;
     Fetch(){
         neededCycles = 1;
         cycle = 1;
@@ -14,7 +15,7 @@ public class Fetch extends PPPart{
             cycleOut = false;
         }
         if (toPrint > 0){
-            System.out.println("FETCHING");
+            System.out.println("FETCHING INSTRUCTION " + counter);
             toPrint--;
         }
     }
@@ -30,6 +31,7 @@ public class Fetch extends PPPart{
         cycleOut = true;
         toPrint++;
         PC.value++;
+        counter++;
         
 	}
 

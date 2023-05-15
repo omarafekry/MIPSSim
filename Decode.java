@@ -41,7 +41,7 @@ public class Decode extends PPPart {
 		boolean R3Zero = false;
 
 		if (Integer.parseInt(R1Add, 2) == 0) {
-			currInstruction.AddrR1 = Integer.parseInt(R1Add, 2);
+			currInstruction.AddrR1 = 0;
 			currInstruction.R1 = 0;
 			R1Zero = true;
 		}
@@ -56,7 +56,7 @@ public class Decode extends PPPart {
 
 		if (!R1Zero) {
 			currInstruction.R1 = Registers[Integer.parseInt(R1Add, 2) - 1].value;
-			currInstruction.AddrR1 = Integer.parseInt(R1Add, 2);
+			currInstruction.AddrR1 = Integer.parseInt(R1Add, 2) - 1;
 		}
 		if (!R2Zero) {
 			currInstruction.R2 = Registers[Integer.parseInt(R2Add, 2) - 1].value;

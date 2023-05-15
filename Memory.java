@@ -22,15 +22,15 @@ public class Memory extends PPPart{
         hasOutput = false;
         return currInstruction;
     }
-    void memory(ActualMemory MEM, Instruction inst) {
+    void memory(ActualMemory memory, Instruction inst, Register[] registers) {
     	currInstruction = inst;
     	if(Integer.parseInt(currInstruction.OpCode,2) == 10) {
-    		int MemValue = Integer.parseInt(BoolArraytoString(MEM.getInstruction(currInstruction.ALUoutput)),2);
+    		int MemValue = Integer.parseInt(BoolArraytoString(memory.getData(currInstruction.ALUoutput)),2);
     		currInstruction.ALUoutput = MemValue;
     		}
     	
     	if(Integer.parseInt(currInstruction.OpCode,2) == 11) {
-    		MEM.addData(StringtoBoolArray(ZeroPadding(Integer.toBinaryString(currInstruction.R1))), currInstruction.ALUoutput);
+    		memory.addData(StringtoBoolArray(ZeroPadding(Integer.toBinaryString(registers[currInstruction.AddrR1].value))), currInstruction.ALUoutput);
     	}
     	toPrint++;
         counter++;

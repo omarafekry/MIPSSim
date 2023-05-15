@@ -24,11 +24,8 @@ public class WriteBack extends PPPart{
     	
     	
     	if( operation!= 4 || operation != 7 || operation!= 11) {
-    		if(currInstruction.AddrR1 == 0) {
-    			return;
-    		}
     		
-    		Registers[currInstruction.AddrR1 - 1].value = currInstruction.ALUoutput;
+    		Registers[currInstruction.AddrR1].value = currInstruction.ALUoutput;
     	}
         toPrint++;
         counter++;

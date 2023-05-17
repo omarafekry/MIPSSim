@@ -5,6 +5,7 @@ public class Execute extends PPPart{
     boolean hasOutput;
     int toPrint = 0;
     int counter = 0;
+    boolean jumpTaken = false;
     Execute(){
         neededCycles = 2;
         cycle = 1;
@@ -17,16 +18,16 @@ public class Execute extends PPPart{
             hasOutput = true;
             instructionID = -1;
         }
-        if (toPrint > 0){
-            //System.out.println("EXECUTING INSTRUCTION " + counter);
-            toPrint--;
-        }
     }
     Instruction getInstruction(){
         hasOutput = false;
         return outputInstruction;
     }
     public void execute(Instruction inst, Register PC) {
+        if (inst == null){
+			cycle = 1;
+			return;
+		}
         currInstruction = inst;
 		int operandA = currInstruction.R2;
 		int operandB = currInstruction.R3;
@@ -35,10 +36,12 @@ public class Execute extends PPPart{
 		
 		if(operation == 4 && zeroFlag==1) {
 			PC.value = currInstruction.ALUoutput;
+            jumpTaken = true;
 		}	
 			
 		if(operation == 7) {	
 			PC.value = currInstruction.ALUoutput;
+            jumpTaken = true;
 		}
 		
         toPrint += 2;
@@ -63,7 +66,7 @@ public class Execute extends PPPart{
         	case 2: output = operandA * operandB; break;
         	case 3: output = Imm ; break;
         	case 4: if(operandA == operandB) 
-        			    zeroFlag = 1; output = PC + 1 + Imm; 
+        			    zeroFlag = 1; output = PC + 1 + Imm;
         			break;
         	case 5: output = operandA & operandB; break;
         	case 6: output = operandA ^ Imm; break;
@@ -88,5 +91,10 @@ public class Execute extends PPPart{
     	}
     	
     	return result;
+    }
+    public boolean isJumpTaken() {
+        boolean temp = jumpTaken;
+        jumpTaken = false;
+        return temp;
     }
 }

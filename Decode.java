@@ -2,8 +2,6 @@ public class Decode extends PPPart {
 	String IR;
 	Instruction currInstruction = null, outputInstruction = null, waitingInstruction = null;
 	boolean hasOutput = false;
-	int toPrint = 0;
-	int counter = 0;
 
 	Decode() {
 		neededCycles = 2;
@@ -18,10 +16,6 @@ public class Decode extends PPPart {
 			hasOutput = true;
 			instructionID = -1;
 		}
-		if (toPrint > 0) {
-			//System.out.println("DECODING INSTRUCTION " + counter);
-			toPrint--;
-		}
 	}
 
 	Instruction getInstruction() {
@@ -30,6 +24,10 @@ public class Decode extends PPPart {
 	}
 
 	public void decode(Instruction IR, Register[] Registers) {
+		if (IR == null){
+			cycle = 1;
+			return;
+		}
 		currInstruction = new Instruction();
 		currInstruction.OpCode = IR.instruction.substring(0, 4);
 		String R1Add = IR.instruction.substring(4, 9);
@@ -72,9 +70,16 @@ public class Decode extends PPPart {
 		currInstruction.SHAMT = IR.instruction.substring(19, 32);
 
 		waitingInstruction = currInstruction;
-		toPrint += 2;
-		counter++;
 		currInstruction.id = IR.id;
 		instructionID = IR.id;
 	}
+
+    public void flush() {
+		currInstruction = null;
+		waitingInstruction = null;
+		hasOutput = false;
+		outputInstruction = null;
+		cycle = 1;
+    }
 }
+	

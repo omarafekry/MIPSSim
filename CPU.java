@@ -17,7 +17,7 @@ public class CPU {
         ActualMemory mem = new ActualMemory();
 
         while(sc.hasNextLine())
-            mem.addInstruction(Parser.parse(sc.nextLine()));
+            mem.addInstruction(Interpreter.parse(sc.nextLine()));
         
         sc.close();
 
@@ -38,31 +38,39 @@ public class CPU {
         // print divider
         String str = "---------";
         System.out.printf("%-9s %-9s %-9s %-9s %-9s %-9s\n",str,str,str,str,str,str);
-
-        for (int cycle = 0; cycle < 7 + ((mem.getNumberOfInstructions() - 1) * 2); cycle++, fetchOrMemory = !fetchOrMemory) {
-			//System.out.println("-------CYCLE " + (cycle+1) + "------- PC = " + PC.value);
+        int cycle = 1;
+        while (true) {
             if (fetchOrMemory && PC.value < mem.getNumberOfInstructions())
                 fetch.fetch(PC, mem);
+            if (fetch.noInstruction())
+                break;
             if (decode.isReady() && fetch.hasOutput)
                 decode.decode(fetch.getInstruction(), registers);
             if (execute.isReady() && decode.hasOutput)
                 execute.execute(decode.getInstruction(), PC);
+
+            if (execute.isJumpTaken()){
+                fetch.flush();
+                decode.flush();
+                System.out.println("FLUSHED FETCH AND DECODE");
+            }
+            
             if (memory.isReady() && execute.hasOutput)
                 memory.memory(mem, execute.getInstruction(), registers);
             if (writeBack.isReady() && memory.hasOutput)
                 writeBack.writeback(registers, memory.getInstruction());
 
-            System.out.printf("%-9s %-9s %-9s %-9s %-9s %-9s\n", (cycle+1), fetch.getInstructionID(),decode.getInstructionID(),execute.getInstructionID(),memory.getInstructionID(),writeBack.getInstructionID());
-
-
+            System.out.printf("%-9s %-9s %-9s %-9s %-9s %-9s\n", cycle, fetch.getInstructionID(),decode.getInstructionID(),execute.getInstructionID(),memory.getInstructionID(),writeBack.getInstructionID());
 
             fetch.cycle();
             decode.cycle();
             execute.cycle();
             memory.cycle();
             writeBack.cycle();
-
+            cycle++;
 		}
+
+        
         printRegisters(registers);
         printMemory(mem);
     }
@@ -104,6 +112,5 @@ public class CPU {
             System.out.printf("%-15s %-15s %-15s %-15s %-15s %-15s %-15s %-15s\n", 
             (i+1024) + ": " + memoryStrings[i+1024], (i + 128  +1024) + ": " + memoryStrings[i+128 +1024],(i + 256 +1024) + ": " + memoryStrings[i + 256+1024], (i + 384+1024) + ": " + memoryStrings[i+384+1024],
             (i + 512 +1024) + ": " + memoryStrings[i + 512 +1024], (i + 640  +1024) + ": " + memoryStrings[i+640 +1024],(i + 768 +1024) + ": " + memoryStrings[i + 768+1024], (i + 896+1024) + ": " + memoryStrings[i+896+1024]);
-      
     }
 }

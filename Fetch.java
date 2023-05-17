@@ -2,13 +2,14 @@ public class Fetch extends PPPart{
     boolean[] instruction;
     String instructionString;
     boolean hasOutput = false, outputNextCycle = false;
-    int toPrint = 0;
-    int counter = 0;
     Instruction currInstruction = null;
+    boolean noInstruction = false;
+
     Fetch(){
         neededCycles = 1;
         cycle = 1;
     }
+
     void cycle() {
         super.cycle();
         if (outputNextCycle){ 
@@ -16,11 +17,8 @@ public class Fetch extends PPPart{
             outputNextCycle = false;
             instructionID = -1;
         }
-        if (toPrint > 0){
-            //System.out.println("FETCHING INSTRUCTION " + counter);
-            toPrint--;
-        }
     }
+
     Instruction getInstruction(){
         hasOutput = false;
         return currInstruction;
@@ -33,12 +31,10 @@ public class Fetch extends PPPart{
         currInstruction.id = PC.value;
         instructionID = PC.value;
         outputNextCycle = true;
-        toPrint++;
         PC.value++;
-        counter++;
-        
+        if (currInstruction.instruction.equals("00000000000000000000000000000000"))
+            noInstruction = true;
 	}
-
 
     String BoolArraytoString(boolean[] BoolArray) {
     	String result ="";
@@ -50,5 +46,16 @@ public class Fetch extends PPPart{
     	}
     	
     	return result;
+    }
+
+    public void flush() {
+        outputNextCycle = false;
+        currInstruction = null;
+        instructionID = -1;
+        hasOutput = false;
+    }
+    
+    public boolean noInstruction() {
+        return noInstruction;
     }
 }

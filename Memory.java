@@ -1,7 +1,7 @@
 public class Memory extends PPPart{
     Instruction currInstruction = null;
-    int toPrint = 0, counter = 0;
-    boolean hasOutput = false, outputNextCycle;
+    int printValue, printLocation, counter = 0;
+    boolean hasOutput = false, outputNextCycle, toPrint = false;
     Memory(){
         neededCycles = 1;
         cycle = 1;
@@ -12,10 +12,10 @@ public class Memory extends PPPart{
             hasOutput = true;
             outputNextCycle = false;
             instructionID = -1;
-        }
-        if (toPrint > 0){
-            //System.out.println("MEMORY INSTRUCTION " + counter);
-            toPrint--;
+            if (toPrint){
+                System.out.println("Stored " + printValue + " in memory location " + printLocation);
+                toPrint = false;
+            }
         }
     }
     Instruction getInstruction(){
@@ -24,26 +24,23 @@ public class Memory extends PPPart{
     }
     void memory(ActualMemory memory, Instruction inst, Register[] registers) {
     	currInstruction = inst;
-    	if(Integer.parseInt(currInstruction.OpCode,2) == 10) {
+        int opcode = Integer.parseInt(inst.OpCode, 2);
+        System.out.println("Memory input " + inst.id + ": opcode = " + opcode + " ALU output = " + currInstruction.ALUoutput + " R1 = " + registers[currInstruction.AddrR1].getValue());
+
+    	if(opcode == 10) {
     		int MemValue = Integer.parseInt(BoolArraytoString(memory.getData(currInstruction.ALUoutput)),2);
     		currInstruction.ALUoutput = MemValue;
     		}
     	
     	if(Integer.parseInt(currInstruction.OpCode,2) == 11) {
-    		memory.addData(StringtoBoolArray(ZeroPadding(Integer.toBinaryString(registers[currInstruction.AddrR1].value))), currInstruction.ALUoutput);
+    		memory.addData(registers[currInstruction.AddrR1 - 1].getBits(), currInstruction.ALUoutput);
+            printValue = registers[currInstruction.AddrR1 - 1].getValue();
+            printLocation = currInstruction.ALUoutput;
+            toPrint = true;
     	}
-    	toPrint++;
         counter++;
         outputNextCycle = true;
         instructionID = currInstruction.id;
-    }
-    public static String ZeroPadding(String s) {
-    	String result = s;
-    	for(int i = s.length() ; i<32 ; i++) {
-    		result = "0" + result;
-    	}
-    	
-    	return result;
     }
     static boolean[] StringtoBoolArray(String s) {
         boolean[] r = new boolean[32];

@@ -28,6 +28,7 @@ public class Decode extends PPPart {
 			cycle = 1;
 			return;
 		}
+		System.out.println("Decode input " + IR.id + ": Instruction = " + IR.instruction);
 		currInstruction = new Instruction();
 		currInstruction.OpCode = IR.instruction.substring(0, 4);
 		String R1Add = IR.instruction.substring(4, 9);
@@ -53,14 +54,14 @@ public class Decode extends PPPart {
 		}
 
 		if (!R1Zero) {
-			currInstruction.R1 = Registers[Integer.parseInt(R1Add, 2) - 1].value;
-			currInstruction.AddrR1 = Integer.parseInt(R1Add, 2) - 1;
+			currInstruction.R1 = Registers[Integer.parseInt(R1Add, 2) - 1].getValue();
+			currInstruction.AddrR1 = Integer.parseInt(R1Add, 2);
 		}
 		if (!R2Zero) {
-			currInstruction.R2 = Registers[Integer.parseInt(R2Add, 2) - 1].value;
+			currInstruction.R2 = Registers[Integer.parseInt(R2Add, 2) - 1].getValue();
 		}
 		if (!R3Zero) {
-			currInstruction.R3 = Registers[Integer.parseInt(R3Add, 2) - 1].value;
+			currInstruction.R3 = Registers[Integer.parseInt(R3Add, 2) - 1].getValue();
 		}
 
 		currInstruction.Imm = IR.instruction.substring(14, 32);

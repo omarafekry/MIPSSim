@@ -39,11 +39,15 @@ public class CPU {
         String str = "---------";
         System.out.printf("%-9s %-9s %-9s %-9s %-9s %-9s\n",str,str,str,str,str,str);
         int cycle = 1;
-        while (true) {
-            if (fetchOrMemory && PC.value < mem.getNumberOfInstructions())
+        boolean doneFetching = false;
+        while (true){
+
+            
+
+            if (fetchOrMemory && !doneFetching)
                 fetch.fetch(PC, mem);
             if (fetch.noInstruction())
-                break;
+                doneFetching = true;
             if (decode.isReady() && fetch.hasOutput)
                 decode.decode(fetch.getInstruction(), registers);
             if (execute.isReady() && decode.hasOutput)
@@ -59,15 +63,19 @@ public class CPU {
                 memory.memory(mem, execute.getInstruction(), registers);
             if (writeBack.isReady() && memory.hasOutput)
                 writeBack.writeback(registers, memory.getInstruction());
-
+            System.out.printf("%-9s %-9s %-9s %-9s %-9s %-9s\n",str,str,str,str,str,str);
             System.out.printf("%-9s %-9s %-9s %-9s %-9s %-9s\n", cycle, fetch.getInstructionID(),decode.getInstructionID(),execute.getInstructionID(),memory.getInstructionID(),writeBack.getInstructionID());
-
+            System.out.printf("%-9s %-9s %-9s %-9s %-9s %-9s\n",str,str,str,str,str,str);
             fetch.cycle();
             decode.cycle();
             execute.cycle();
             memory.cycle();
             writeBack.cycle();
             cycle++;
+            fetchOrMemory = !fetchOrMemory;
+
+            if (doneFetching && !decode.hasOutput && !execute.hasOutput && !memory.hasOutput)
+                break;
 		}
 
         
@@ -85,7 +93,7 @@ public class CPU {
         System.out.println();
         System.out.println("-------------------------REGISTERS-------------------------");
         for (int i = 0; i < registers.length / 4; i++) {
-            System.out.printf("%-15s %-15s %-15s %-15s\n","R" + i + ": " + registers[i].value, "R" + (i + 8) + ": " + registers[i+8].value,"R" + (i + 16) + ": " + registers[i + 16].value, "R" + (i + 24) + ": " + registers[i+24].value);
+            System.out.printf("%-15s %-15s %-15s %-15s\n","R" + i + ": " + registers[i].getValue(), "R" + (i + 8) + ": " + registers[i+8].getValue(),"R" + (i + 16) + ": " + registers[i + 16].getValue(), "R" + (i + 24) + ": " + registers[i+24].getValue());
         }
     }
     static void printMemory(ActualMemory memory){

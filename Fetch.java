@@ -2,7 +2,7 @@ public class Fetch extends PPPart{
     boolean[] instruction;
     String instructionString;
     boolean hasOutput = false, outputNextCycle = false;
-    Instruction currInstruction = null;
+    Instruction currInstruction = null, outputInstruction;
     boolean noInstruction = false;
 
     Fetch(){
@@ -15,25 +15,30 @@ public class Fetch extends PPPart{
         if (outputNextCycle){ 
             hasOutput = true;
             outputNextCycle = false;
+            outputInstruction = currInstruction;
             instructionID = -1;
         }
     }
 
     Instruction getInstruction(){
         hasOutput = false;
-        return currInstruction;
+        return outputInstruction;
     }
     
     public void fetch(Register PC, ActualMemory mem){
-        currInstruction =  new Instruction();
-		instruction = mem.getInstruction(PC.value);
+        System.out.println("Fetch input: PC = " + PC.getValue());
+        currInstruction = new Instruction();
+		instruction = mem.getInstruction(PC.getValue());
         currInstruction.instruction = BoolArraytoString(instruction);
-        currInstruction.id = PC.value;
-        instructionID = PC.value;
-        outputNextCycle = true;
-        PC.value++;
-        if (currInstruction.instruction.equals("00000000000000000000000000000000"))
+        if (currInstruction.instruction.equals("00000000000000000000000000000000")){
             noInstruction = true;
+            return;
+        }
+        currInstruction.id = PC.getValue();
+        instructionID = PC.getValue();
+        outputNextCycle = true;
+        PC.setValue(PC.getValue() + 1);
+        
 	}
 
     String BoolArraytoString(boolean[] BoolArray) {
